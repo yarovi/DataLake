@@ -10,3 +10,7 @@ source .venv/bin/activate
 
 # To install dependency
 pip install -r requirements.txt
+
+
+# Import to run etl/main_v2.py as module
+python -m etl.main_v2
