@@ -1,5 +1,5 @@
-from etl.extract_raw import extract_table
-from etl.load_bronze_v2 import load_to_bronze
+from elt.extract_raw import extract_table
+from elt.load_bronze_v2 import load_to_bronze
 
 
 def main():
