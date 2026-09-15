@@ -8,27 +8,8 @@ SILVER_CONTAINER = "silver"
 SILVER_PREFIX = "sales/"
 SILVER_STAGING_PATH = Path("staging/silver_input/sales")
 
-def clean_staging():
-    SILVER_STAGING_PATH.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-    old_files = list(
-        SILVER_STAGING_PATH.glob("*.parquet")
-    )
-
-    print(
-        f"[SILVER-STAGING] Archivos anteriores: "
-        f"{len(old_files)}"
-    )
-
-    for file in old_files:
-        file.unlink()
 
 def main():
-    # 1. Limpiar staging local
-    clean_staging()
     blob_service_client = get_blob_service_client()
 
     container_client = blob_service_client.get_container_client(
