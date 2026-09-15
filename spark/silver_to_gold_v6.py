@@ -12,6 +12,10 @@ GOLD_MONTH_OUTPUT_PATH = (
     "/opt/spark/staging/gold/sales_by_month"
 )
 
+GOLD_PRODUCT_OUTPUT_PATH = (
+    "/opt/spark/staging/gold/sales_by_product"
+)
+
 
 def create_spark_session():
     return (
@@ -292,12 +296,115 @@ def main():
         "escrito correctamente"
     )
 
+    # =========================================================
+    # GOLD - SALES BY PRODUCT
+    # =========================================================
+
+    print("\n=== GOLD: SALES BY PRODUCT ===")
+
+    sales_by_product_df = (
+        silver_df
+        .groupBy(
+            "product_id",
+            "product_name"
+        )
+        .agg(
+            F.sum(
+                "quantity"
+            ).alias("units_sold"),
+
+            F.round(
+                F.sum("line_total"),
+                2
+            ).alias("total_sales")
+        )
+        .orderBy(
+            F.col("total_sales").desc()
+        )
+    )
+
+    product_count = sales_by_product_df.count()
+
+    sales_by_product_df.show(
+        product_count,
+        truncate=False
+    )
+
+    print(
+        f"[GOLD] productos generados: "
+        f"{product_count}"
+    )
+
+
+    # =========================================================
+    # RECONCILIAR GOLD PRODUCT
+    # =========================================================
+
+    print(
+        "\n=== RECONCILIACION SALES BY PRODUCT ==="
+    )
+
+    product_total = (
+        sales_by_product_df
+        .agg(
+            F.round(
+                F.sum("total_sales"),
+                2
+            ).alias("total")
+        )
+        .first()["total"]
+    )
+
+    print(
+        f"[RECON-PRODUCT] Total Silver: "
+        f"{silver_total}"
+    )
+
+    print(
+        f"[RECON-PRODUCT] Total Gold:   "
+        f"{product_total}"
+    )
+
+    if silver_total == product_total:
+        print(
+            "[RECON-PRODUCT] OK - "
+            "Silver y Gold por producto coinciden"
+        )
+    else:
+        print(
+            "[RECON-PRODUCT] ERROR - "
+            "Los totales no coinciden"
+        )
+
+    # =========================================================
+    # ESCRIBIR GOLD PRODUCT
+    # =========================================================
+
+    print(
+        f"\n[GOLD] Escribiendo: "
+        f"{GOLD_PRODUCT_OUTPUT_PATH}"
+    )
+
+    (
+        sales_by_product_df
+        .write
+        .mode("overwrite")
+        .parquet(
+            GOLD_PRODUCT_OUTPUT_PATH
+        )
+    )
+
+    print(
+        "[GOLD] sales_by_product "
+        "escrito correctamente"
+    )
 
     # =========================================================
     # 10. FINALIZAR
     # =========================================================
 
     print("\n=== GOLD FINALIZADO ===")
+
 
     spark.stop()
 

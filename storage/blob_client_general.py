@@ -7,6 +7,32 @@ from azure.storage.blob import BlobServiceClient
 
 load_dotenv()
 
+def delete_blobs_by_prefix(
+    container_name: str,
+    prefix: str
+):
+    blob_service_client = get_blob_service_client()
+
+    container_client = (
+        blob_service_client
+        .get_container_client(container_name)
+    )
+
+    blobs = container_client.list_blobs(
+        name_starts_with=prefix
+    )
+
+    deleted = 0
+
+    for blob in blobs:
+        container_client.delete_blob(blob.name)
+        deleted += 1
+
+    print(
+        f"[BLOB] Eliminados {deleted} blobs "
+        f"de {container_name}/{prefix}"
+    )
+
 def create_container(container_name: str):
     blob_service_client = get_blob_service_client()
 
