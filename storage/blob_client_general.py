@@ -108,6 +108,18 @@ def upload_file(
 
     print(f"[BLOB] Archivo subido: {blob_name}")
 
+def list_container_blobs(container_name: str):
+    blob_service_client = get_blob_service_client()
+
+    container_client = blob_service_client.get_container_client(
+        container_name
+    )
+
+    print(f"[BLOB] Contenido de '{container_name}':")
+
+    for blob in container_client.list_blobs():
+        print(f" - {blob.name}")
+
 
 if __name__ == "__main__":
     create_bronze_container()
