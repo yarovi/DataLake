@@ -20,15 +20,22 @@ def main():
 
     create_container(GOLD_CONTAINER)
 
+        # Validar todos los datasets antes de publicar cualquiera.
     for dataset in GOLD_DATASETS:
-
-        local_path = Path(
-            f"staging/gold/{dataset}"
-        )
+        local_path = Path(f"staging/gold/{dataset}")
 
         parquet_files = list(
             local_path.glob("part-*.parquet")
         )
+
+        success_file = local_path / "_SUCCESS"
+
+        if not parquet_files or not success_file.exists():
+            raise FileNotFoundError(
+                f"[GOLD-UPLOAD] Dataset incompleto: {dataset}"
+            )
+
+
 
         print(
             f"[GOLD-UPLOAD] {dataset}: "
@@ -39,11 +46,9 @@ def main():
         # Solo borramos el dataset remoto si
         # tenemos archivos locales para reemplazarlo.
         if not parquet_files:
-            print(
-                f"[GOLD-UPLOAD] ERROR - "
-                f"No existen archivos para {dataset}"
+            raise FileNotFoundError(
+                f"[GOLD-UPLOAD] No existen archivos Parquet para {dataset}"
             )
-            continue
 
         # Limpiar versión anterior en Azurite
         delete_blobs_by_prefix(

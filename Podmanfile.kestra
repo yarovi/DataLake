@@ -1,0 +1,16 @@
+FROM kestra/kestra:latest
+
+USER root
+
+# Dependencia del sistema para crear entornos virtuales Python
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends python3.12-venv \
+    && rm -rf /var/lib/apt/lists/*
+
+# Dependencias del proyecto Northwind
+COPY requirements.txt /tmp/northwind-requirements.txt
+
+# Runtime independiente del Python interno de Kestra
+RUN python -m venv /opt/northwind-venv \
+    && /opt/northwind-venv/bin/python -m pip install --no-cache-dir \
+       -r /tmp/northwind-requirements.txt

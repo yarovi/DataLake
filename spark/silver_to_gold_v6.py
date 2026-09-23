@@ -157,9 +157,9 @@ def main():
             "Silver y Gold por país coinciden"
         )
     else:
-        print(
-            "[RECON-COUNTRY] ERROR - "
-            "Los totales no coinciden"
+        raise ValueError(
+        f"[RECON-COUNTRY] Error de conciliación: "
+        f"Silver={silver_total}, Gold={country_total}"
         )
 
 
@@ -243,9 +243,9 @@ def main():
             "Silver y Gold mensual coinciden"
         )
     else:
-        print(
-            "[RECON-MONTH] ERROR - "
-            "Los totales no coinciden"
+        raise ValueError(
+            f"[RECON-MONTH] Error de conciliación: "
+            f"Silver={silver_total}, Gold={monthly_total}"
         )
 
 
@@ -371,9 +371,9 @@ def main():
             "Silver y Gold por producto coinciden"
         )
     else:
-        print(
-            "[RECON-PRODUCT] ERROR - "
-            "Los totales no coinciden"
+        raise ValueError(
+            f"[RECON-PRODUCT] Error de conciliación: "
+            f"Silver={silver_total}, Gold={product_total}"
         )
 
     # =========================================================
