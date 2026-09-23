@@ -5,4 +5,4 @@ python-dotenv
 sqlalchemy
 
 azure-storage-blob
-cryptography==45.0.5
+cryptography==50.0.0
